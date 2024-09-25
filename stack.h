@@ -113,7 +113,7 @@ public:
         return *this;
     }
 
-    friend std::ostream& operator << (std::ostream& out, Stack<T>& stack){
+    friend std::ostream& operator << (std::ostream& out, Stack& stack){
         for (int i = stack.size() - 1; i >= 0; --i)
             out << stack.elements[i] << ' ';
         out << std::endl;

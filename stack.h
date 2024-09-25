@@ -44,23 +44,25 @@ public:
     }
 
     Stack(Stack&& other) noexcept {
-        this->elements = new T[other.stack_capacity];
         this->stack_size = other.stack_size;
         this->stack_capacity = other.stack_capacity;
+        this->elements = new T[this->stack_capacity];
         for (int i = 0; i < this->stack_size; ++i)
             this->elements[i] = other.elements[i];
+        other.clear();
     }
 
     Stack(std::initializer_list<T>&& input){
         this->stack_size = input.size();
         this->stack_capacity = this->stack_size + (10 - this->stack_size % 10);
         this->elements = new T[this->stack_capacity];
-        const T current = input.begin();
+        auto current = input.begin();
         for (int i = 0; i < this->stack_size; ++i)
             this->elements[i] = *current++;
     }
 
     Stack& operator=(const Stack& other){
+        delete[] this->elements;
         this->elements = new T[other.stack_capacity];
         this->stack_size = other.stack_size;
         this->stack_capacity = other.stack_capacity;
@@ -70,11 +72,13 @@ public:
     }
 
     Stack& operator=(Stack&& other) noexcept {
+        delete[] this->elements;
         this->elements = new T[other.stack_capacity];
         this->stack_size = other.stack_size;
         this->stack_capacity = other.stack_capacity;
         for (int i = 0; i < this->stack_size; ++i)
             this->elements[i] = other.elements[i];
+        other.clear();
         return *this;
     }
 
@@ -86,7 +90,7 @@ public:
 
     T pop(){
         if (this->stack_size == 0)
-            return nullptr;
+            throw std::length_error("Stack is empty!");
         if (this->stack_size < this->stack_capacity / 2)
             this->resize_down();
         this->stack_size--;
@@ -95,7 +99,7 @@ public:
 
     T check_pop() const{
         if (this->stack_size == 0)
-            return nullptr;
+            throw std::length_error("Stack is empty!");
         return this->elements[this->stack_size - 1];
     }
 
@@ -109,7 +113,12 @@ public:
         return *this;
     }
 
-    friend std::ostream& operator << (std::ostream& out, Stack<T>& stack);
+    friend std::ostream& operator << (std::ostream& out, Stack<T>& stack){
+        for (int i = stack.size() - 1; i >= 0; --i)
+            out << stack.elements[i] << ' ';
+        out << std::endl;
+        return out;
+    }
 
     bool empty() const{
         return this->stack_size == 0;
@@ -150,13 +159,10 @@ public:
         data = this->elements[this->size() - 1];
         this->elements[this->size() - 1] = t;
     }
-};
 
-template <typename T>
-std::ostream &operator<<(std::ostream &out, Stack<T> &stack){
-    for (int i = stack.size() - 1; i >= 0; --i)
-        out << stack.elements[i] << std::endl;
-    return out;
-}
+    ~Stack(){
+        delete[] this->elements;
+    }
+};
 
 #endif //LAB_1_STACK_H

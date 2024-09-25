@@ -244,11 +244,7 @@ BENCHMARK(BM_StackEqualityOperator)->Range(8, 8 << 10);
 
 int main() {
     int n = RUN_ALL_TESTS();
-    if (n == 0)
-        cout << "ALL TESTS PASSED";
-    else
-        cout << "SOME TEST FAILED";
-    cout << std::endl;
+    cout << (n == 0 ? "ALL TESTS PASSED" : "SOME TEST FAILED") << std::endl;
     ::benchmark::RunSpecifiedBenchmarks();
     return 0;
 }

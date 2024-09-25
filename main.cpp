@@ -1,5 +1,6 @@
 #include <iostream>
 #include <gtest/gtest.h>
+#include <benchmark/benchmark.h>
 #include "stack.h"
 
 using std::cout;
@@ -151,11 +152,103 @@ TEST(StackTest, Swap) {
     EXPECT_EQ(s.check_pop(), 20);
 }
 
+// Бенчмарк для операции push с добавлением n элементов в стек
+static void BM_StackPush(benchmark::State& state) {
+    for (auto _ : state) {
+        Stack<int> s;
+        for (int i = 0; i < state.range(0); ++i) {
+            s.push(i);
+        }
+    }
+}
+// Регистрируем бенчмарк для разных размеров
+BENCHMARK(BM_StackPush)->Range(8, 8 << 10);
+
+// Бенчмарк для операции pop с удалением n элементов из стека
+static void BM_StackPop(benchmark::State& state) {
+    for (auto _ : state) {
+        Stack<int> s;
+        for (int i = 0; i < state.range(0); ++i) {
+            s.push(i);
+        }
+        for (int i = 0; i < state.range(0); ++i) {
+            s.pop();
+        }
+    }
+}
+// Регистрируем бенчмарк для разных размеров
+BENCHMARK(BM_StackPop)->Range(8, 8 << 10);
+
+// Бенчмарк для конструктора копирования
+static void BM_StackCopyConstructor(benchmark::State& state) {
+    Stack<int> s;
+    for (int i = 0; i < state.range(0); ++i) {
+        s.push(i);
+    }
+    for (auto _ : state) {
+        Stack<int> s_copy(s);
+    }
+}
+// Регистрируем бенчмарк для разных размеров
+BENCHMARK(BM_StackCopyConstructor)->Range(8, 8 << 10);
+
+// Бенчмарк для конструктора перемещения
+static void BM_StackMoveConstructor(benchmark::State& state) {
+    for (auto _ : state) {
+        Stack<int> s;
+        for (int i = 0; i < state.range(0); ++i) {
+            s.push(i);
+        }
+        Stack<int> s_moved(std::move(s));
+    }
+}
+// Регистрируем бенчмарк для разных размеров
+BENCHMARK(BM_StackMoveConstructor)->Range(8, 8 << 10);
+
+// Бенчмарк для конструктора с initializer_list
+static void BM_StackInitializerListConstructor(benchmark::State& state) {
+    for (auto _ : state) {
+        Stack<int> s = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    }
+}
+// Регистрируем бенчмарк
+BENCHMARK(BM_StackInitializerListConstructor);
+
+// Бенчмарк для функции clear
+static void BM_StackClear(benchmark::State& state) {
+    for (auto _ : state) {
+        Stack<int> s;
+        for (int i = 0; i < state.range(0); ++i) {
+            s.push(i);
+        }
+        s.clear();
+    }
+}
+// Регистрируем бенчмарк для разных размеров
+BENCHMARK(BM_StackClear)->Range(8, 8 << 10);
+
+// Бенчмарк для оператора сравнения ==
+static void BM_StackEqualityOperator(benchmark::State& state) {
+    Stack<int> s1, s2;
+    for (int i = 0; i < state.range(0); ++i) {
+        s1.push(i);
+        s2.push(i);
+    }
+    for (auto _ : state) {
+        bool are_equal = (s1 == s2);
+        benchmark::DoNotOptimize(are_equal);
+    }
+}
+// Регистрируем бенчмарк для разных размеров
+BENCHMARK(BM_StackEqualityOperator)->Range(8, 8 << 10);
+
 int main() {
     int n = RUN_ALL_TESTS();
     if (n == 0)
         cout << "ALL TESTS PASSED";
     else
         cout << "SOME TEST FAILED";
+    cout << std::endl;
+    ::benchmark::RunSpecifiedBenchmarks();
     return 0;
 }

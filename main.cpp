@@ -14,10 +14,10 @@ TEST(StackTest, DefaultConstructor) {
 
 // Тест на добавление элементов
 TEST(StackTest, Push) {
-    Stack<int> s;
-    s.push(10);
+    Stack<std::string> s;
+    s.push("hello");
     EXPECT_EQ(s.size(), 1);
-    EXPECT_EQ(s.check_pop(), 10);
+    EXPECT_EQ(s.check_pop(), "hello");
 }
 
 // Тест на удаление элементов
@@ -50,7 +50,6 @@ TEST(StackTest, MoveConstructor) {
     Stack<int> s1;
     s1.push(10);
     s1.push(20);
-
     Stack<int> s2 = std::move(s1);
     EXPECT_EQ(s2.size(), 2);
     EXPECT_EQ(s2.pop(), 20);
@@ -60,18 +59,33 @@ TEST(StackTest, MoveConstructor) {
 
 // Тест на инициализатор
 TEST(StackTest, InitializerListConstructor) {
-    Stack<int> s = {1, 2, 3, 4};
+    Stack<double> s = {1.1, 2.2, 3.3, 4.4};
     EXPECT_EQ(s.size(), 4);
+    EXPECT_EQ(s.pop(), 4.4);
+    EXPECT_EQ(s.pop(), 3.3);
+}
+
+TEST(StackTest, IteratorConstructor){
+    int *values = new int [10];
+    for (int i = 0; i < 10; ++i) {
+        values[i] = i;
+    }
+    Stack<int> s = Stack(values, 3, 6);
+    EXPECT_EQ(s.size(), 3);
+    EXPECT_EQ(s.pop(), 5);
     EXPECT_EQ(s.pop(), 4);
-    EXPECT_EQ(s.pop(), 3);
 }
 
 // Тест на перегруженные операторы <<
 TEST(StackTest, PushOperator) {
-    Stack<int> s;
-    s << 10 << 20;
+    using strct = struct {int i; double d; std::string s;};
+    Stack<strct> s;
+    s << strct {10, 1.1, "hello"} << strct {20, 2.2, "world"};
     EXPECT_EQ(s.size(), 2);
-    EXPECT_EQ(s.check_pop(), 20);
+    strct last = s.check_pop();
+    EXPECT_EQ(last.i, 20);
+    EXPECT_EQ(last.d, 2.2);
+    EXPECT_EQ(last.s, "world");
 }
 
 // Тест на перегруженные операторы >>

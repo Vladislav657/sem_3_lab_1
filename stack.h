@@ -61,6 +61,16 @@ public:
             this->elements[i] = *current++;
     }
 
+    Stack(T *iter, int begin, int end){
+        if (end <= begin)
+            throw std::range_error("end index should be greater then begin index");
+        this->stack_size = end - begin;
+        this->stack_capacity = this->stack_size + (10 - this->stack_size % 10);
+        this->elements = new T[this->stack_capacity];
+        for (int i = begin; i < end; ++i)
+            this->elements[i - begin] = iter[i];
+    }
+
     Stack& operator=(const Stack& other){
         delete[] this->elements;
         this->elements = new T[other.stack_capacity];

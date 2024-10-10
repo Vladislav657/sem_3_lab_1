@@ -175,4 +175,17 @@ public:
     }
 };
 
+struct Point{
+    int x, y;
+
+    bool operator != (Point other) const{
+        return this->x != other.x || this->y != other.y;
+    }
+
+    friend std::ostream& operator << (std::ostream& out, Point point){
+        out << "Point(" << point.x << ", " << point.y << ")";
+        return out;
+    }
+};
+
 #endif //LAB_1_STACK_H

@@ -78,14 +78,16 @@ TEST(StackTest, IteratorConstructor){
 
 // Тест на перегруженные операторы <<
 TEST(StackTest, PushOperator) {
-    using strct = struct {int i; double d; std::string s;};
-    Stack<strct> s;
-    s << strct {10, 1.1, "hello"} << strct {20, 2.2, "world"};
-    EXPECT_EQ(s.size(), 2);
-    strct last = s.check_pop();
-    EXPECT_EQ(last.i, 20);
-    EXPECT_EQ(last.d, 2.2);
-    EXPECT_EQ(last.s, "world");
+    Stack<Point> s1;
+    s1 << Point {10, 12} << Point {20, 2};
+    EXPECT_EQ(s1.size(), 2);
+    Point last = s1.check_pop();
+    cout << s1;
+    Stack<Point>s2;
+    EXPECT_EQ(last.x, 20);
+    EXPECT_EQ(last.y, 2);
+    s2 << Point {10, 12} << Point {20, 2};
+    EXPECT_TRUE(s1 == s2);
 }
 
 // Тест на перегруженные операторы >>
